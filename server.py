@@ -60,7 +60,7 @@ WIDGET_HTML = r"""<!doctype html>
       --line: rgba(80, 80, 80, .10);
       --line-soft: rgba(80, 80, 80, .075);
       --paper: rgba(80, 80, 80, .025);
-      --shadow: rgba(0, 0, 0, .055);
+      --shadow: rgba(0, 0, 0, .075);
       --focus: rgba(111, 78, 168, .48);
     }
     :root[data-theme="dark"] {
@@ -84,13 +84,22 @@ WIDGET_HTML = r"""<!doctype html>
       }
     }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 1px; background: transparent; color: var(--ink); }
+    body {
+      margin: 0;
+      padding: 6px 12px 12px;
+      background: transparent;
+      color: var(--ink);
+    }
     .card {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--paper);
-      box-shadow: 0 3px 12px var(--shadow);
+      background-clip: padding-box;
+      box-shadow: 0 3px 10px var(--shadow);
       padding: 14px 16px 10px;
     }
     .header {
