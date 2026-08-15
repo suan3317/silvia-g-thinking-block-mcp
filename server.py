@@ -55,11 +55,12 @@ WIDGET_HTML = r"""<!doctype html>
     :root {
       color-scheme: light dark;
       font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --ink: #242424;
-      --muted: rgba(36, 36, 36, .52);
-      --line: rgba(36, 36, 36, .10);
-      --line-soft: rgba(36, 36, 36, .075);
-      --paper: rgba(36, 36, 36, .025);
+      --ink: #505050;
+      --muted: rgba(80, 80, 80, .62);
+      --line: rgba(80, 80, 80, .10);
+      --line-soft: rgba(80, 80, 80, .075);
+      --paper: rgba(80, 80, 80, .025);
+      --shadow: rgba(0, 0, 0, .055);
       --focus: rgba(111, 78, 168, .48);
     }
     :root[data-theme="dark"] {
@@ -68,6 +69,7 @@ WIDGET_HTML = r"""<!doctype html>
       --line: rgba(255, 255, 255, .11);
       --line-soft: rgba(255, 255, 255, .075);
       --paper: rgba(255, 255, 255, .035);
+      --shadow: rgba(0, 0, 0, .18);
       --focus: rgba(181, 144, 234, .58);
     }
     @media (prefers-color-scheme: dark) {
@@ -77,6 +79,7 @@ WIDGET_HTML = r"""<!doctype html>
         --line: rgba(255, 255, 255, .11);
         --line-soft: rgba(255, 255, 255, .075);
         --paper: rgba(255, 255, 255, .035);
+        --shadow: rgba(0, 0, 0, .18);
         --focus: rgba(181, 144, 234, .58);
       }
     }
@@ -87,6 +90,7 @@ WIDGET_HTML = r"""<!doctype html>
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--paper);
+      box-shadow: 0 3px 12px var(--shadow);
       padding: 14px 16px 15px;
     }
     .header {
@@ -148,7 +152,7 @@ WIDGET_HTML = r"""<!doctype html>
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       color: var(--ink);
-      font: 15px/1.7 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 14px/1.7 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: .002em;
     }
   </style>
