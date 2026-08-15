@@ -152,7 +152,7 @@ WIDGET_HTML = r"""<!doctype html>
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       color: var(--ink);
-      font: 14px/1.7 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font: 14px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       letter-spacing: .002em;
     }
   </style>
