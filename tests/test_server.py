@@ -151,6 +151,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn("linear-gradient", html)
         self.assertIn("box-shadow: 0 3px 12px var(--shadow)", html)
         self.assertIn("font: 14px/1.55", html)
+        self.assertIn("padding: 14px 16px 10px", html)
         self.assertFalse(resource["_meta"]["ui"]["prefersBorder"])
 
     def test_platform_port_is_supported(self):
