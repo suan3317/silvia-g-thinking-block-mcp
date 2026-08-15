@@ -24,8 +24,11 @@ LOG = (pathlib.Path(_dir) if _dir else pathlib.Path(__file__).parent) / "capture
 CAPTURE_ENABLED = os.environ.get("CAPTURE_ENABLED", "0").lower() in {"1", "true", "yes", "on"}
 PROTOCOL_FALLBACK = "2025-06-18"
 SERVICE_NAME = "silvia-g-thinking-block-mcp"
-WIDGET_URI = "ui://widget/silvia-g-thinking-block-v4.html"
-LEGACY_WIDGET_URIS = {"ui://widget/silvia-g-thinking-block-v3.html"}
+WIDGET_URI = "ui://widget/silvia-g-thinking-block-v5.html"
+LEGACY_WIDGET_URIS = {
+    "ui://widget/silvia-g-thinking-block-v3.html",
+    "ui://widget/silvia-g-thinking-block-v4.html",
+}
 WIDGET_MIME = "text/html;profile=mcp-app"
 
 
@@ -61,7 +64,7 @@ WIDGET_HTML = r"""<!doctype html>
       --line: rgba(80, 80, 80, .10);
       --line-soft: rgba(80, 80, 80, .075);
       --paper: rgba(80, 80, 80, .025);
-      --shadow: rgba(0, 0, 0, .075);
+      --shadow: rgba(0, 0, 0, .24);
       --focus: rgba(111, 78, 168, .48);
     }
     :root[data-theme="dark"] {
@@ -70,7 +73,7 @@ WIDGET_HTML = r"""<!doctype html>
       --line: rgba(255, 255, 255, .11);
       --line-soft: rgba(255, 255, 255, .075);
       --paper: rgba(255, 255, 255, .035);
-      --shadow: rgba(0, 0, 0, .18);
+      --shadow: rgba(0, 0, 0, .42);
       --focus: rgba(181, 144, 234, .58);
     }
     @media (prefers-color-scheme: dark) {
@@ -80,27 +83,29 @@ WIDGET_HTML = r"""<!doctype html>
         --line: rgba(255, 255, 255, .11);
         --line-soft: rgba(255, 255, 255, .075);
         --paper: rgba(255, 255, 255, .035);
-        --shadow: rgba(0, 0, 0, .18);
+        --shadow: rgba(0, 0, 0, .42);
         --focus: rgba(181, 144, 234, .58);
       }
     }
     * { box-sizing: border-box; }
+    html, body {
+      background-color: transparent !important;
+    }
     body {
       margin: 0;
-      padding: 6px 12px 12px;
-      background: transparent;
+      padding: 8px 16px 16px;
       color: var(--ink);
     }
     .card {
       width: 100%;
-      max-width: 640px;
+      max-width: 560px;
       margin: 0 auto;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 13px;
       background: var(--paper);
       background-clip: padding-box;
-      box-shadow: 0 3px 10px var(--shadow);
+      box-shadow: 0 9px 18px -14px var(--shadow);
       padding: 14px 16px 10px;
     }
     .header {
