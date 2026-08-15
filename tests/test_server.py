@@ -150,7 +150,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn('class="mark"', html)
         self.assertNotIn("linear-gradient", html)
         self.assertIn("box-shadow: 0 3px 12px var(--shadow)", html)
-        self.assertIn("font: 14px/1.7", html)
+        self.assertIn("font: 14px/1.55", html)
         self.assertFalse(resource["_meta"]["ui"]["prefersBorder"])
 
     def test_platform_port_is_supported(self):
