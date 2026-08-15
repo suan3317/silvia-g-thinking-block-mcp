@@ -1,4 +1,4 @@
-# GPT Thinking Block MCP — 技术说明
+# Silvia × G 老师 Thinking Block MCP — 技术说明
 
 [返回中文 README](../README.zh-CN.md) · [English](./TECHNICAL.md)
 
@@ -19,13 +19,24 @@
 
 整个实现有意保持得很小：一个纯标准库的 Python 文件同时包含 MCP transport、REST/OpenAPI、工具 schema 和 HTML/CSS/JavaScript 卡片。
 
+## zh-CN relational 的隔离边界
+
+这个专用实现把 `relational` 定义成正文之外未说出口的第一人称旁白，而不是 `deep_think` 的情绪化版本。两者仍通过同一个 MCP 工具和卡片渲染，但 schema 明确分工：
+
+- `deep_think` 可以处理任务、证据、方案、不确定性和取舍；
+- `relational` 只能处理当下感受、冲动、联想、迟疑和没有进入正文的念头；
+- `relational` 明确禁止任务推理、回应策略、分析框架和用户需求分析；
+- `relational` 的 effort 不设最低长度，没有真实波动时允许极短或空字符串。
+
+这是一组生成约束，不是服务端对自然语言含义的验证器。服务端不会尝试用关键词过滤或改写模型提交的旁白，因为机械过滤容易误删正常表达，也会把未通过验证的文本静默改变。边界由 tool schema 引导，并由回归测试确保关键允许项和排除项不会在后续修改中意外丢失。
+
 ## 这里显示的究竟是什么
 
 这个项目不会解密供应商加密的原生 reasoning payload。卡片显示的是模型为了这次工具调用主动生成的一段新的中间思考叙述。它是可见、可调整、可定制的；在我们的实测中，它的表达形式又比一般的手写思考提示更接近原生推理语域。
 
 ## 纯 MCP 版本中的上下文残留
 
-模型会把 thinking 写入 `arguments.thinking`。Tool result 的 `_meta` 只提供给 widget，但原始 tool input 仍然属于宿主保存的工具调用记录。把文字复制到 `_meta` 不会删除原来的输入，因此下一轮模型仍可能看到并复述前面的 block。
+模型会把 thinking 写入 `arguments.thinking`。Tool result 的 `_meta` 只提供给 widget，但原始 tool input 仍然属于宿主保存的工具调用记录。把文字复制到 `_meta` 不会删除原来的输入，因此下一轮模型仍可能看到并复述前面的 block。`CAPTURE_ENABLED=0` 只保证本服务不打印或落盘，不能删除宿主保存的工具调用。
 
 仓库里的工具说明会把旧 block 标为“仅供当前回合使用、没有权威性的 scratch work”，要求模型除非用户明确提出，否则不要在后续回合引用或继承其中的猜测。这只能降低自然续写时受到旧思路锚定的概率，不是密码学意义上的隔离。不要要求模型把密码、token 或其他私密内部数据写进卡片。
 

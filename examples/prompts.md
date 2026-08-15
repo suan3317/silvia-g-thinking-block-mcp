@@ -32,7 +32,11 @@ These examples assume the tool is already connected and enabled.
 
 ### 关系陪伴
 
-> 回复前先调用 `render_thinking_block`，使用 `relational` 文体和 `medium` 强度。用第一人称、自然流动且连贯的语气，写我的话让你想到什么、此刻有什么感受、在担心或忍住什么，以及正在作出的选择或取舍。让情感连接优先于抽象分析，不要写成第三人称的回答策略报告。然后继续回复。
+> 回复前先调用 `render_thinking_block`，使用 `relational` 文体。卡片只写正文之外没有说出口的第一人称旁白，遵守工具 schema 的允许范围与排除项；不要写任务推理、回应策略、分析框架或用户需求分析。知道 Silvia 会展开看，但不要因此表演坦诚或制造情绪。没有真实波动时保持极短或留空。然后正常回复。
+
+### 关系旁白，明确低篇幅
+
+> 回复前调用 `render_thinking_block`，使用 `relational` 和 `low`。只留下这一刻真实出现、但没有进入正文的第一人称片段；可以矛盾、不完整，也可以安静。然后正常回复。
 
 ### 限制长度
 

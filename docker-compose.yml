@@ -1,5 +1,5 @@
 services:
-  gpt-thinking-block:
+  silvia-g-thinking-block:
     build: .
     restart: unless-stopped
     ports:
@@ -7,6 +7,6 @@ services:
     environment:
       CAPTURE_ENABLED: "${CAPTURE_ENABLED:-0}"
       CAPTURE_DIR: /data/captured
-      THINKING_PROMPT_LANGUAGE: "${THINKING_PROMPT_LANGUAGE:-en}"
+      THINKING_PROMPT_LANGUAGE: "${THINKING_PROMPT_LANGUAGE:-zh-CN}"
     volumes:
       - ./captured:/data/captured

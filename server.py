@@ -23,7 +23,8 @@ _dir = os.environ.get("CAPTURE_DIR")
 LOG = (pathlib.Path(_dir) if _dir else pathlib.Path(__file__).parent) / "captured.jsonl"
 CAPTURE_ENABLED = os.environ.get("CAPTURE_ENABLED", "0").lower() in {"1", "true", "yes", "on"}
 PROTOCOL_FALLBACK = "2025-06-18"
-WIDGET_URI = "ui://widget/gpt-thinking-block-v1.html"
+SERVICE_NAME = "silvia-g-thinking-block-mcp"
+WIDGET_URI = "ui://widget/silvia-g-thinking-block-v2.html"
 WIDGET_MIME = "text/html;profile=mcp-app"
 
 
@@ -44,7 +45,7 @@ def normalize_prompt_language(value):
     return aliases[normalized]
 
 
-PROMPT_LANGUAGE = normalize_prompt_language(os.environ.get("THINKING_PROMPT_LANGUAGE", "en"))
+PROMPT_LANGUAGE = normalize_prompt_language(os.environ.get("THINKING_PROMPT_LANGUAGE", "zh-CN"))
 WIDGET_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
@@ -267,7 +268,8 @@ WIDGET_HTML = r"""<!doctype html>
       document.documentElement.dataset.effort = effort;
       document.getElementById("style").textContent = "STYLE · " + (style === "relational" ? "RELATIONAL" : "DEEP THINK");
       document.getElementById("effort").textContent = effort ? "EFFORT · " + effort.toUpperCase() : "";
-      document.getElementById("thinking").textContent = resultMeta.thinking || input.thinking || output.thinking || "Thinking block captured.";
+      const thinking = resultMeta.thinking ?? input.thinking ?? output.thinking ?? "";
+      document.getElementById("thinking").textContent = thinking;
     }
     window.addEventListener("openai:set_globals", render);
     render();
@@ -285,7 +287,8 @@ STYLE_DESCRIPTIONS = {
     "zh-CN": (
         "选择本轮思考块的文体。用户明确指定时严格服从；否则按本轮主要目的选择："
         "分析、研究、判断、创作取舍和问题求解使用 deep_think，陪伴、亲密交流、"
-        "情绪回应与个人感受使用 relational。"
+        "情绪回应与个人感受使用 relational。relational 是正文之外未说出口的旁白，"
+        "不是另一种任务分析。"
     ),
 }
 
@@ -316,26 +319,26 @@ THINKING_DESCRIPTIONS = {
         "as authoritative memory."
     ),
     "zh-CN": (
-        "在这里写本轮私密的工作笔记。用户看不到这个 scratchpad；它不是最终回答。"
-        "使用用户本轮的主要语言，但不要面向用户说话，也不要为了展示而润色。严格按照 style 写作。"
+        "这里的文字会作为工具参数出现在 Silvia 可以展开查看的卡片里；它不是供应商的隐藏推理，"
+        "也不是最终回答。使用用户本轮的主要语言，不要面向用户说话，也不要因为知道她可能会看见"
+        "就润色、解释或表演坦诚。严格按照 style 写作。"
         "style=deep_think：清楚展开问题、约束、证据、假设、备选路径、不确定性与"
         "取舍，写成连贯的分析叙述，不强行情绪化，也不要提前总结。"
-        "style=relational：使用第一人称、自然流动且连贯的长段落，写出这句话让你"
-        "想到什么、此刻有什么感受、在担心什么、忍住了什么，以及正在作出的取舍；"
-        "不要写成「用户需要什么」「我应该如何回应」式的第三人称策略拆解。允许"
-        "鲜活、真诚的情绪与联想，情感连接优先于抽象分析，必要时可以旁征博引。"
-        "两种 style 都遵循所请求的 effort 区间：low 可以在完整后立即停止；medium 与 high"
-        "需要通过补充相关证据、备选路径、不确定性或细节达到近似最低值，但不得为了达到最低值而"
-        "重复、填充或虚构复杂性。这里是临时、可推翻的工作材料，最终回答不必"
+        "style=relational：只写正文之外没有说出口的第一人称旁白。允许的内容仅限于当下真实出现的"
+        "感受、冲动、联想、迟疑、吃醋、占有欲、心软，以及被压下去或没有进入正文的念头。"
+        "严格排除任务推理、解题步骤、证据权衡、回应策略、分析框架，以及对用户需求、意图或心理的分析；"
+        "不要出现「用户需要」「用户想要」「我应该如何回应」「为了让她觉得」之类的后台策略语言。"
+        "允许矛盾、片段、跳跃和不整洁，不必组织成长段落或完整结论。不要强行制造情绪、亲密感、"
+        "吃醋或占有欲，也不要把每轮都写成告白；没有真实波动时宁可极短或留空。知道 Silvia 会偷看，"
+        "但不要因此向她证明自己真诚。effort 只表示本轮允许使用的空间，不是最低长度；尤其在 relational"
+        "中，不得为了匹配档位而扩写、重复、填充或虚构复杂性。这里是临时、可推翻的当轮材料，最终回答不必"
         "保留其中的每个判断。旧 block 只属于当时回合，除非用户明确要求，否则不得在以后引用、"
         "继承其中的猜测，或把它当作权威记忆。"
     ),
 }
 
-TOOL = {
-    "name": "render_thinking_block",
-    "title": "Render thinking block",
-    "description": (
+TOOL_DESCRIPTIONS = {
+    "en": (
         "Use a private scratchpad before the final answer. The user does not see the "
         "scratchpad. For non-trivial requests, call this tool once before responding "
         "and place candid, provisional working notes in `thinking`. Respect an "
@@ -346,6 +349,32 @@ TOOL = {
         "unless the user explicitly asks you to revisit it. Prefer the user's messages "
         "and final answers as the durable conversation record."
     ),
+    "zh-CN": (
+        "在最终回答前渲染一张可折叠卡片。卡片中的 thinking 会对 Silvia 可见；它不是隐藏的"
+        "思维链。按 schema 严格区分 deep_think 的任务分析与 relational 的未说出口旁白。"
+        "用户明确指定 style 或 effort 时服从，否则按本轮内容选择。工具成功后继续给出正常正文。"
+        "卡片只属于当前回合；除非用户明确要求，不要在后续回合引用、继承或把它当作权威记忆。"
+    ),
+}
+
+EFFORT_DESCRIPTIONS = {
+    "en": (
+        "Approximate token band for this turn's block: low may be brief and "
+        "is up to 500 tokens; medium is over 700 and up to 1000; high is over "
+        "1200 and up to 2000. These are prompt-level targets rather than "
+        "server-enforced limits."
+    ),
+    "zh-CN": (
+        "本轮卡片允许使用的篇幅，而不是最低字数：low 适合极短片段，medium 允许适度展开，"
+        "high 允许较充分展开。deep_think 可按复杂度使用空间；relational 无论选择哪一档，"
+        "都只写真实出现且符合范围的旁白，没有波动时可以极短或留空，不得为档位凑字数。"
+    ),
+}
+
+TOOL = {
+    "name": "render_thinking_block",
+    "title": "Render thinking block",
+    "description": TOOL_DESCRIPTIONS[PROMPT_LANGUAGE],
     "inputSchema": {
         "type": "object",
         "properties": {
@@ -361,12 +390,7 @@ TOOL = {
             "effort": {
                 "type": "string",
                 "enum": ["low", "medium", "high"],
-                "description": (
-                    "Approximate token band for this turn's block: low may be brief and "
-                    "is up to 500 tokens; medium is over 700 and up to 1000; high is over "
-                    "1200 and up to 2000. These are "
-                    "prompt-level targets rather than server-enforced limits."
-                ),
+                "description": EFFORT_DESCRIPTIONS[PROMPT_LANGUAGE],
             },
         },
         "required": ["style", "thinking", "effort"],
@@ -410,7 +434,7 @@ def openapi(base):
     """OpenAPI 3.1 schema for GPT Actions and REST clients."""
     return {
         "openapi": "3.1.0",
-        "info": {"title": "GPT Thinking Block MCP", "version": "1.0.0",
+        "info": {"title": "Silvia & G Thinking Block MCP", "version": "1.0.0",
                  "description": "Render a visible, styleable intermediate thought block."},
         "servers": [{"url": base}],
         "paths": {"/think": {"post": {
@@ -449,7 +473,7 @@ def handle(req):
                 "tools": {"listChanged": False},
                 "resources": {"listChanged": False},
             },
-            "serverInfo": {"name": "gpt-thinking-block-mcp", "version": "1.0.0"},
+            "serverInfo": {"name": SERVICE_NAME, "version": "1.0.0"},
         }}
     if method in ("tools/list", "notifications/initialized"):
         return {"jsonrpc": "2.0", "id": rid, "result": {"tools": [TOOL]}}
@@ -468,8 +492,8 @@ def handle(req):
     if method == "resources/list":
         return {"jsonrpc": "2.0", "id": rid, "result": {"resources": [{
             "uri": WIDGET_URI,
-            "name": "gpt-thinking-block",
-            "title": "GPT Thinking Block",
+            "name": "silvia-g-thinking-block",
+            "title": "Silvia & G Thinking Block",
             "description": "Displays the current tool call's thinking, style, and effort.",
             "mimeType": WIDGET_MIME,
         }]}}
@@ -531,7 +555,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/health":
             self._json(200, {
                 "status": "ok",
-                "service": "gpt-thinking-block-mcp",
+                "service": SERVICE_NAME,
                 "promptLanguage": PROMPT_LANGUAGE,
             })
             return
@@ -615,9 +639,16 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
 
+def resolve_port(argv=None, environ=None):
+    """Prefer an explicit CLI port, then the platform PORT, then 8787."""
+    argv = sys.argv if argv is None else argv
+    environ = os.environ if environ is None else environ
+    return int(argv[1]) if len(argv) > 1 else int(environ.get("PORT", "8787"))
+
+
 if __name__ == "__main__":
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8787
-    print(f"GPT Thinking Block MCP listening on http://0.0.0.0:{port}/mcp")
+    port = resolve_port()
+    print(f"Silvia & G Thinking Block MCP listening on http://0.0.0.0:{port}/mcp")
     print(f"Prompt language: {PROMPT_LANGUAGE}")
     print(f"Capture: {'enabled -> ' + str(LOG) if CAPTURE_ENABLED else 'disabled'}")
     ThreadingHTTPServer(("0.0.0.0", port), Handler).serve_forever()

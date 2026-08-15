@@ -1,4 +1,4 @@
-# GPT Thinking Block MCP — Technical Notes
+# Silvia & G Thinking Block MCP — Technical Notes
 
 [Back to README](../README.md) · [简体中文](./TECHNICAL.zh-CN.md)
 
@@ -19,13 +19,19 @@ This is related to asking a model to “write out its reasoning,” but the tool
 
 The implementation is deliberately small: one dependency-free Python server contains the MCP transport, REST/OpenAPI surface, tool schema, and HTML/CSS/JavaScript widget.
 
+## `zh-CN` relational isolation boundary
+
+This dedicated implementation defines `relational` as first-person, unspoken asides outside the final reply, not an emotional version of `deep_think`. Both use the same MCP tool and card, but the schema assigns separate roles: `deep_think` may handle tasks and evidence; `relational` may contain only present feelings, impulses, associations, hesitation, and thoughts omitted from the reply. It explicitly excludes task reasoning, response strategy, analytical frameworks, and user-needs analysis. Relational effort values impose no minimum length, and an empty string is allowed when there is no genuine movement.
+
+These are generation constraints, not a server-side semantic validator. The server does not keyword-filter or rewrite submitted prose. Regression tests keep the important inclusions and exclusions present in the schema.
+
 ## What exactly is rendered?
 
 The project does not decrypt a provider's encrypted reasoning payload. It renders a new, model-authored intermediate reasoning narrative produced for the tool call. That narrative is visible, editable, and steerable, and in our empirical comparison its form is closer to native reasoning output than ordinary “show your reasoning” prompting.
 
 ## Context retention in the MCP-only version
 
-The model writes the block into `arguments.thinking`. Tool-result `_meta` is widget-only, but the original tool input remains part of the host's tool-call transcript. Copying the text into `_meta` does not erase that original input, so a later turn may still see and quote an earlier block.
+The model writes the block into `arguments.thinking`. Tool-result `_meta` is widget-only, but the original tool input remains part of the host's tool-call transcript. Copying the text into `_meta` does not erase that original input, so a later turn may still see and quote an earlier block. `CAPTURE_ENABLED=0` only guarantees that this server does not print or persist the content; it cannot delete a tool call stored by the host.
 
 The included tool description labels earlier blocks as non-authoritative, current-turn scratch work and tells the model not to quote or carry them forward unless the user asks. This is a behavioral mitigation, not cryptographic isolation. Do not request secrets, credentials, or private internal data in a thinking block.
 
