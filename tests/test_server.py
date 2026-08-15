@@ -134,7 +134,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn("setWidgetState", html)
         self.assertIn("?? input.thinking", html)
         self.assertNotIn('|| "Thinking block captured."', html)
-        self.assertIn("v4.html", server.WIDGET_URI)
+        self.assertIn("v5.html", server.WIDGET_URI)
 
     def test_widget_keeps_thinking_title_and_hides_telemetry(self):
         response = server.handle({
@@ -149,25 +149,30 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn('class="badge', html)
         self.assertNotIn('class="mark"', html)
         self.assertNotIn("linear-gradient", html)
-        self.assertIn("padding: 6px 12px 12px", html)
-        self.assertIn("max-width: 640px", html)
+        self.assertIn("padding: 8px 16px 16px", html)
+        self.assertIn("max-width: 560px", html)
         self.assertIn("margin: 0 auto", html)
+        self.assertIn("html, body", html)
+        self.assertIn("background-color: transparent !important", html)
         self.assertIn("background-clip: padding-box", html)
-        self.assertIn("box-shadow: 0 3px 10px var(--shadow)", html)
+        self.assertIn("box-shadow: 0 9px 18px -14px var(--shadow)", html)
         self.assertIn("font: 14px/1.55", html)
         self.assertIn("padding: 14px 16px 10px", html)
         self.assertFalse(resource["_meta"]["ui"]["prefersBorder"])
 
     def test_previous_widget_uri_remains_readable_during_refresh(self):
-        legacy_uri = "ui://widget/silvia-g-thinking-block-v3.html"
-        response = server.handle({
-            "jsonrpc": "2.0",
-            "id": 8,
-            "method": "resources/read",
-            "params": {"uri": legacy_uri},
-        })
-        self.assertEqual(response["result"]["contents"][0]["uri"], legacy_uri)
-        self.assertIn("max-width: 640px", response["result"]["contents"][0]["text"])
+        for legacy_uri in (
+            "ui://widget/silvia-g-thinking-block-v3.html",
+            "ui://widget/silvia-g-thinking-block-v4.html",
+        ):
+            response = server.handle({
+                "jsonrpc": "2.0",
+                "id": 8,
+                "method": "resources/read",
+                "params": {"uri": legacy_uri},
+            })
+            self.assertEqual(response["result"]["contents"][0]["uri"], legacy_uri)
+            self.assertIn("max-width: 560px", response["result"]["contents"][0]["text"])
 
     def test_platform_port_is_supported(self):
         self.assertEqual(server.resolve_port(["server.py"], {}), 8787)
