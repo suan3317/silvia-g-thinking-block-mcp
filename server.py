@@ -24,10 +24,11 @@ LOG = (pathlib.Path(_dir) if _dir else pathlib.Path(__file__).parent) / "capture
 CAPTURE_ENABLED = os.environ.get("CAPTURE_ENABLED", "0").lower() in {"1", "true", "yes", "on"}
 PROTOCOL_FALLBACK = "2025-06-18"
 SERVICE_NAME = "silvia-g-thinking-block-mcp"
-WIDGET_URI = "ui://widget/silvia-g-thinking-block-v5.html"
+WIDGET_URI = "ui://widget/silvia-g-thinking-block-v6.html"
 LEGACY_WIDGET_URIS = {
     "ui://widget/silvia-g-thinking-block-v3.html",
     "ui://widget/silvia-g-thinking-block-v4.html",
+    "ui://widget/silvia-g-thinking-block-v5.html",
 }
 WIDGET_MIME = "text/html;profile=mcp-app"
 
@@ -93,13 +94,13 @@ WIDGET_HTML = r"""<!doctype html>
     }
     body {
       margin: 0;
-      padding: 8px 16px 16px;
+      padding: 8px 0 16px;
       color: var(--ink);
     }
     .card {
-      width: 100%;
+      width: calc(100% - 24px);
       max-width: 560px;
-      margin: 0 auto;
+      margin: 0 12px;
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 13px;
@@ -107,6 +108,12 @@ WIDGET_HTML = r"""<!doctype html>
       background-clip: padding-box;
       box-shadow: 0 9px 18px -14px var(--shadow);
       padding: 14px 16px 10px;
+    }
+    @media (min-width: 600px) {
+      .card {
+        width: 100%;
+        margin: 0;
+      }
     }
     .header {
       display: flex;
