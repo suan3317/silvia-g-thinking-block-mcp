@@ -24,7 +24,7 @@ LOG = (pathlib.Path(_dir) if _dir else pathlib.Path(__file__).parent) / "capture
 CAPTURE_ENABLED = os.environ.get("CAPTURE_ENABLED", "0").lower() in {"1", "true", "yes", "on"}
 PROTOCOL_FALLBACK = "2025-06-18"
 SERVICE_NAME = "silvia-g-thinking-block-mcp"
-WIDGET_URI = "ui://widget/silvia-g-thinking-block-v2.html"
+WIDGET_URI = "ui://widget/silvia-g-thinking-block-v3.html"
 WIDGET_MIME = "text/html;profile=mcp-app"
 
 
@@ -55,87 +55,48 @@ WIDGET_HTML = r"""<!doctype html>
     :root {
       color-scheme: light dark;
       font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --aqua: #96b9b9;
-      --sage: #b3beaf;
-      --apricot: #e4a273;
-      --almond: #c3a77f;
-      --cloud: #dddfdb;
-      --ink: #263c3d;
-      --muted: #5b7070;
-      --line: rgba(79, 119, 120, .48);
-      --line-soft: rgba(79, 119, 120, .22);
-      --paper: rgba(253, 253, 251, .99);
-      --wash: rgba(221, 223, 219, .66);
-      --shadow: rgba(56, 81, 81, .13);
-      --style-bg: var(--aqua);
-      --style-fg: #183637;
-      --style-line: #719899;
-      --effort-bg: var(--almond);
-      --effort-fg: #3d3021;
-      --effort-line: #9c7b50;
+      --ink: #242424;
+      --muted: rgba(36, 36, 36, .52);
+      --line: rgba(36, 36, 36, .10);
+      --line-soft: rgba(36, 36, 36, .075);
+      --paper: rgba(36, 36, 36, .025);
+      --focus: rgba(111, 78, 168, .48);
     }
-    :root[data-style="relational"] {
-      --style-bg: var(--apricot);
-      --style-fg: #4a2918;
-      --style-line: #bd7544;
-    }
-    :root[data-effort="low"] { --effort-bg: var(--sage); --effort-line: #87967f; }
-    :root[data-effort="medium"] { --effort-bg: var(--almond); --effort-line: #9c7b50; }
-    :root[data-effort="high"] { --effort-bg: var(--apricot); --effort-line: #bd7544; }
     :root[data-theme="dark"] {
-      --ink: #f0f4f1;
-      --muted: #bac8c4;
-      --line: rgba(150, 185, 185, .62);
-      --line-soft: rgba(150, 185, 185, .28);
-      --wash: rgba(43, 61, 61, .98);
-      --paper: rgba(31, 47, 48, .99);
-      --shadow: rgba(0, 0, 0, .28);
+      --ink: rgba(255, 255, 255, .88);
+      --muted: rgba(255, 255, 255, .48);
+      --line: rgba(255, 255, 255, .11);
+      --line-soft: rgba(255, 255, 255, .075);
+      --paper: rgba(255, 255, 255, .035);
+      --focus: rgba(181, 144, 234, .58);
     }
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme="light"]) {
-        --ink: #f0f4f1;
-        --muted: #bac8c4;
-        --line: rgba(150, 185, 185, .62);
-        --line-soft: rgba(150, 185, 185, .28);
-        --wash: rgba(43, 61, 61, .98);
-        --paper: rgba(31, 47, 48, .99);
-        --shadow: rgba(0, 0, 0, .28);
+        --ink: rgba(255, 255, 255, .88);
+        --muted: rgba(255, 255, 255, .48);
+        --line: rgba(255, 255, 255, .11);
+        --line-soft: rgba(255, 255, 255, .075);
+        --paper: rgba(255, 255, 255, .035);
+        --focus: rgba(181, 144, 234, .58);
       }
     }
     * { box-sizing: border-box; }
-    body { margin: 0; padding: 2px; background: transparent; color: var(--ink); }
+    body { margin: 0; padding: 1px; background: transparent; color: var(--ink); }
     .card {
-      position: relative;
-      isolation: isolate;
       overflow: hidden;
       border: 1px solid var(--line);
-      border-radius: 16px;
-      background:
-        linear-gradient(90deg, var(--aqua) 0 34%, var(--sage) 34% 58%, var(--almond) 58% 78%, var(--apricot) 78%) top / 100% 4px no-repeat,
-        linear-gradient(145deg, var(--paper), var(--wash));
-      box-shadow:
-        inset 0 0 0 4px rgba(255, 255, 255, .22),
-        0 8px 24px var(--shadow);
-      padding: 18px 19px 18px;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      inset: 5px;
-      border: 1px solid var(--line-soft);
-      border-radius: 11px;
-      pointer-events: none;
+      border-radius: 13px;
+      background: var(--paper);
+      padding: 14px 16px 15px;
     }
     .header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
-      flex-wrap: wrap;
-      margin-bottom: 11px;
-      padding-bottom: 9px;
+      margin-bottom: 10px;
+      padding: 0 0 10px;
       border-bottom: 1px solid var(--line-soft);
       border-top: 0;
       border-right: 0;
@@ -153,51 +114,25 @@ WIDGET_HTML = r"""<!doctype html>
     .header:hover, .header:active { background: transparent; color: inherit; }
     .header:focus:not(:focus-visible) { outline: none; }
     .header:focus-visible {
-      outline: 2px solid var(--style-line);
-      outline-offset: 4px;
-      border-radius: 7px;
-    }
-    .identity, .meta, .badges { display: flex; align-items: center; }
-    .identity { gap: 9px; }
-    .meta { gap: 9px; margin-left: auto; }
-    .badges { gap: 6px; flex-wrap: wrap; }
-    .mark {
-      width: 10px;
-      height: 10px;
-      border: 1px solid #567d7e;
-      border-radius: 50%;
-      background: var(--aqua);
-      box-shadow: 5px 0 0 -2px var(--apricot);
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+      border-radius: 5px;
     }
     .title {
-      color: var(--ink);
-      font-size: 12px;
-      font-weight: 760;
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 590;
+      letter-spacing: .01em;
     }
-    .badge {
-      border: 1px solid;
-      border-radius: 999px;
-      font-size: 10px;
-      font-weight: 780;
-      letter-spacing: .07em;
-      line-height: 1.2;
-      padding: 4px 9px;
-      text-transform: uppercase;
-    }
-    .style { background: var(--style-bg); border-color: var(--style-line); color: var(--style-fg); }
-    .effort { background: var(--effort-bg); border-color: var(--effort-line); color: var(--effort-fg); }
-    .badge:empty { display: none; }
     .chevron {
-      width: 8px;
-      height: 8px;
-      margin: 0 3px 0 1px;
-      border-right: 2px solid var(--muted);
-      border-bottom: 2px solid var(--muted);
+      width: 7px;
+      height: 7px;
+      margin: 2px 3px 0 auto;
+      border-right: 1.25px solid var(--muted);
+      border-bottom: 1.25px solid var(--muted);
       transform: rotate(-135deg);
     }
-    .card[data-collapsed="true"] { padding-bottom: 14px; }
+    .card[data-collapsed="true"] { padding-bottom: 13px; }
     .card[data-collapsed="true"] .header {
       margin-bottom: 0;
       padding-bottom: 0;
@@ -213,8 +148,8 @@ WIDGET_HTML = r"""<!doctype html>
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       color: var(--ink);
-      font: 14px/1.72 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      letter-spacing: .003em;
+      font: 15px/1.7 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: .002em;
     }
   </style>
 </head>
@@ -222,17 +157,8 @@ WIDGET_HTML = r"""<!doctype html>
   <section class="card" id="card" data-collapsed="false" aria-label="Thinking block">
     <button class="header" id="toggle" type="button" aria-expanded="true"
             aria-controls="thinking-content" title="Collapse thinking">
-      <span class="identity">
-        <span class="mark" aria-hidden="true"></span>
-        <span class="title">Thinking</span>
-      </span>
-      <span class="meta">
-        <span class="badges" aria-label="Thinking metadata">
-          <span class="badge style" id="style"></span>
-          <span class="badge effort" id="effort"></span>
-        </span>
-        <span class="chevron" aria-hidden="true"></span>
-      </span>
+      <span class="title">Thinking</span>
+      <span class="chevron" aria-hidden="true"></span>
     </button>
     <div class="content" id="thinking-content">
       <pre class="thinking" id="thinking"></pre>
@@ -266,8 +192,6 @@ WIDGET_HTML = r"""<!doctype html>
       const effort = resultMeta.effort || input.effort || output.effort || "";
       document.documentElement.dataset.style = style;
       document.documentElement.dataset.effort = effort;
-      document.getElementById("style").textContent = "STYLE · " + (style === "relational" ? "RELATIONAL" : "DEEP THINK");
-      document.getElementById("effort").textContent = effort ? "EFFORT · " + effort.toUpperCase() : "";
       const thinking = resultMeta.thinking ?? input.thinking ?? output.thinking ?? "";
       document.getElementById("thinking").textContent = thinking;
     }
@@ -507,9 +431,9 @@ def handle(req):
             "mimeType": WIDGET_MIME,
             "text": WIDGET_HTML,
             "_meta": {
-                "ui": {"prefersBorder": True},
-                "openai/widgetPrefersBorder": True,
-                "openai/widgetDescription": "A readable misty-aqua card showing this turn's thinking, style, and effort.",
+                "ui": {"prefersBorder": False},
+                "openai/widgetPrefersBorder": False,
+                "openai/widgetDescription": "A quiet, minimal card showing this turn's thinking.",
             },
         }]}}
     if method == "ping":
