@@ -91,7 +91,7 @@ WIDGET_HTML = r"""<!doctype html>
       border-radius: 13px;
       background: var(--paper);
       box-shadow: 0 3px 12px var(--shadow);
-      padding: 14px 16px 15px;
+      padding: 14px 16px 10px;
     }
     .header {
       display: flex;
