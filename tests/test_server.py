@@ -134,7 +134,7 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn("setWidgetState", html)
         self.assertIn("?? input.thinking", html)
         self.assertNotIn('|| "Thinking block captured."', html)
-        self.assertIn("v5.html", server.WIDGET_URI)
+        self.assertIn("v6.html", server.WIDGET_URI)
 
     def test_widget_keeps_thinking_title_and_hides_telemetry(self):
         response = server.handle({
@@ -149,9 +149,12 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn('class="badge', html)
         self.assertNotIn('class="mark"', html)
         self.assertNotIn("linear-gradient", html)
-        self.assertIn("padding: 8px 16px 16px", html)
+        self.assertIn("padding: 8px 0 16px", html)
+        self.assertIn("width: calc(100% - 24px)", html)
+        self.assertIn("margin: 0 12px", html)
+        self.assertIn("@media (min-width: 600px)", html)
+        self.assertIn("margin: 0", html)
         self.assertIn("max-width: 560px", html)
-        self.assertIn("margin: 0 auto", html)
         self.assertIn("html, body", html)
         self.assertIn("background-color: transparent !important", html)
         self.assertIn("background-clip: padding-box", html)
@@ -164,6 +167,7 @@ class ProtocolTests(unittest.TestCase):
         for legacy_uri in (
             "ui://widget/silvia-g-thinking-block-v3.html",
             "ui://widget/silvia-g-thinking-block-v4.html",
+            "ui://widget/silvia-g-thinking-block-v5.html",
         ):
             response = server.handle({
                 "jsonrpc": "2.0",
