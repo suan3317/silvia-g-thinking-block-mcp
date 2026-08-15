@@ -24,7 +24,8 @@ LOG = (pathlib.Path(_dir) if _dir else pathlib.Path(__file__).parent) / "capture
 CAPTURE_ENABLED = os.environ.get("CAPTURE_ENABLED", "0").lower() in {"1", "true", "yes", "on"}
 PROTOCOL_FALLBACK = "2025-06-18"
 SERVICE_NAME = "silvia-g-thinking-block-mcp"
-WIDGET_URI = "ui://widget/silvia-g-thinking-block-v3.html"
+WIDGET_URI = "ui://widget/silvia-g-thinking-block-v4.html"
+LEGACY_WIDGET_URIS = {"ui://widget/silvia-g-thinking-block-v3.html"}
 WIDGET_MIME = "text/html;profile=mcp-app"
 
 
@@ -436,7 +437,7 @@ def handle(req):
         }]}}
     if method == "resources/read":
         uri = (req.get("params") or {}).get("uri")
-        if uri != WIDGET_URI:
+        if uri != WIDGET_URI and uri not in LEGACY_WIDGET_URIS:
             return {"jsonrpc": "2.0", "id": rid,
                     "error": {"code": -32002, "message": f"resource not found: {uri}"}}
         return {"jsonrpc": "2.0", "id": rid, "result": {"contents": [{
