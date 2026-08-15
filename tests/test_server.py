@@ -134,7 +134,22 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn("setWidgetState", html)
         self.assertIn("?? input.thinking", html)
         self.assertNotIn('|| "Thinking block captured."', html)
-        self.assertIn("v2.html", server.WIDGET_URI)
+        self.assertIn("v3.html", server.WIDGET_URI)
+
+    def test_widget_keeps_thinking_title_and_hides_telemetry(self):
+        response = server.handle({
+            "jsonrpc": "2.0",
+            "id": 7,
+            "method": "resources/read",
+            "params": {"uri": server.WIDGET_URI},
+        })
+        resource = response["result"]["contents"][0]
+        html = resource["text"]
+        self.assertIn('<span class="title">Thinking</span>', html)
+        self.assertNotIn('class="badge', html)
+        self.assertNotIn('class="mark"', html)
+        self.assertNotIn("linear-gradient", html)
+        self.assertFalse(resource["_meta"]["ui"]["prefersBorder"])
 
     def test_platform_port_is_supported(self):
         self.assertEqual(server.resolve_port(["server.py"], {}), 8787)
